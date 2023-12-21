@@ -1,10 +1,11 @@
-from data import CorpusHandler
+from corpus.type import type
+from corpus.handler import handler
 
-c = CorpusHandler()
-bij = c.get_file('bijankhan_unprocessed')
-print(bij)
-c.combine_files(bij)
+corpusname = "bijankhan"
+# c_type= type.sents_raw
+c_type= type.whole_raw
+c_type= type.whole_tok
+# c_type= type.sents_tok
 
-bij = c.get_file('peykareh_unprocessed')
-print(bij)
-c.combine_files(bij)
+filename = corpusname+"_"+str(c_type.name)
+print(handler().get_file(filename))
