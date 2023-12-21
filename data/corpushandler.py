@@ -1,5 +1,7 @@
 import csv
 import os
+import os
+import glob
 
 
 class CorpusHandler:
@@ -62,3 +64,26 @@ class CorpusHandler:
         dict: The dictionary of files and their paths.
         """
         return self._files
+
+    @staticmethod
+    def split_file(file_path):
+        max_size = 64 * 1024 * 1024  # 100 MB
+        with open(file_path, 'rb') as f:
+            chunk = f.read(max_size)
+            chunk_num = 1
+
+            while chunk:
+                with open(f'{os.path.splitext(file_path)[0]}{chunk_num}.txt', 'wb') as out_file:
+                    out_file.write(chunk)
+
+                chunk = f.read(max_size)
+                chunk_num += 1
+
+    @staticmethod
+    def combine_files(file_path):
+        with open(file_path, 'wb') as outfile:
+            chunk_num = 0
+            while os.path.exists(f'{os.path.splitext(file_path)[0]}{chunk_num}.txt'):
+                with open(f'{os.path.splitext(file_path)[0]}{chunk_num}.txt', 'rb') as infile:
+                    outfile.write(infile.read())
+                chunk_num += 1
