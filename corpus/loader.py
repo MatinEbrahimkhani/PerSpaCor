@@ -60,7 +60,6 @@ class loader:
             return whole
 
     def load_corpus(self, corpus_name, corpus_type: Enum, shuffle_sentences=False, shuffle_tokens=False):
-        ###TODO: write this one
         valid_shuffle = False
         any_shuffle = shuffle_tokens and shuffle_sentences
         loaded = loader._load_corpus(corpus_name,corpus_type)
