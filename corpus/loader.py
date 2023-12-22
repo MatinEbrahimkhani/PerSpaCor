@@ -1,9 +1,11 @@
 import os
 from enum import Enum
+import random
 
 from .type import type
 from .handler import handler
 from .builder import builder
+
 
 class loader:
     def __init__(self, tok_delim="\b", sent_delim="\n"):
@@ -21,64 +23,60 @@ class loader:
         with open(txtfile, "r") as f:
             return f.read()
 
-
-    def load_corpus(self, corpus_name, corpus_type: Enum):
+    def _load_corpus(self, corpus_name, corpus_type: Enum):
         if corpus_type not in list(type):
             raise Exception("invalid corpus type requested")
-        filename = corpus_name+"_"+str(corpus_type.name)
-        if os.path.isfile(self._filehandler.get_file(filename)):
-            if corpus_type.value == type.whole_raw.value:
+        file_key = handler.get_file_key(corpus_name, corpus_type)
 
-                    with open(self._filehandler.get_file(filename), "r") as f:
-                        # Reading the lines from the file
-                        whole = f.read()
-                    return whole
-                else:
-                    print(f"Requested version not found corpus_name: {corpus_name}, corpus_type: {corpus_type}")
-                    whole = builder().build_corpus(corpus_name, corpus_type)
+        if not os.path.isfile(self._filehandler.get_file(file_key)):
+            print(f"Requested version not found corpus_name: {corpus_name}, corpus_type: {corpus_type}")
+            print("building the corpus")
+            return builder().build_corpus(corpus_name, corpus_type)
 
-            elif corpus_type.value == type.whole_tok.value:
-                if os.path.isfile(self._filehandler.get_file(filename)):
-                    with open(self._filehandler.get_file(filename), "r") as f:
-                        # Reading the lines from the file
-                        line = f.read()
-                        # Using list comprehension to split the lines by the tab character
-                        whole = line.split(self._tok_delim)
-                    return whole
-                else:
-                    print(f"Requested version not found corpus_name: {corpus_name}, corpus_type: {corpus_type}")
-                    return builder().build_corpus(corpus_name, corpus_type)
-            elif corpus_type.value == type.sents_raw.value:
-                if os.path.isfile(self._filehandler.get_file(filename)):
-                    with open(self._filehandler.get_file(filename), "r") as f:
-                        # Reading the lines from the file
-                        line = f.read()
-                        # Using list comprehension to split the lines by the tab character
-                        whole = line.split(self._tok_delim)
-                    return whole
-                else:
-                    print(f"Requested version not found corpus_name: {corpus_name}, corpus_type: {corpus_type}")
-                    return builder().build_corpus(corpus_name, corpus_type)
+        file_path = self._filehandler.get_file(file_key)
+        if corpus_type.value == type.whole_raw.value:
+            with open(file_path, "r") as f:
+                # Reading the lines from the file
+                whole = f.read()
+            return whole
+        elif corpus_type.value == type.whole_tok.value:
+            with open(file_path, "r") as f:
+                # Reading the lines from the file
+                whole = f.read()
+                whole = whole.split(self._tok_delim)
+            return whole
+        elif corpus_type.value == type.sents_raw.value:
+            with open(file_path, "r") as f:
+                # Reading the lines from the file
+                whole = f.read()
+                whole = whole.split(self._sent_delim)
+            return whole
+        elif corpus_type.value == type.sents_tok.value:
+            with open(file_path, "r") as f:
+                # Reading the lines from the file
+                whole = f.read()
+                whole = whole.split(self._sent_delim)
+                whole = [sentence.split(self._tok_delim) for sentence in whole]
+            return whole
 
-            elif corpus_type.value == type.sents_tok.value:
-                if os.path.isfile(self._filehandler.get_file("bijankhan_sents_tok")):
-                    with open(self._filehandler.get_file("bijankhan_sents_tok"), "r") as f:
-                        # Reading the lines from the file
-                        line = f.read()
-                        # Using list comprehension to split the lines by the tab character
-                        whole = line.split(self._tok_delim)
-                    return whole
-                else:
-                    print(f"Requested version not found corpus_name: {corpus_name}, corpus_type: {corpus_type}")
-                    return builder().build_corpus(corpus_name, corpus_type)
+    def load_corpus(self, corpus_name, corpus_type: Enum, shuffle_sentences=False, shuffle_tokens=False):
+        ###TODO: write this one
+        valid_shuffle = False
+        any_shuffle = shuffle_tokens and shuffle_sentences
+        loaded = loader._load_corpus(corpus_name,corpus_type)
+        if shuffle_sentences and (corpus_type.value == type.sents_tok.value or corpus_type.value == type.sents_tok.value)
+            random.shuffle(loaded)
+            valid_shuffle = True
 
-            # --------------------------------------- PEYKAREH ---------------------------------------
-        elif corpus_name == "peykareh":
-            if corpus_type.value == type.whole_raw.value:
-                pass
-            elif corpus_type.value == type.whole_tok.value:
-                pass
-            elif corpus_type.value == type.sents_raw.value:
-                pass
-            elif corpus_type.value == type.sents_tok.value:
-                pass
+        if shuffle_tokens and corpus_type.value == type.whole_tok.value:
+            random.shuffle(loaded)
+            valid_shuffle = True
+        if shuffle_tokens and corpus_type.value == type.sents_tok.value:
+            for sentence in loaded:
+                random.shuffle(sentence)
+            valid_shuffle = True
+
+        if not valid_shuffle or not any_shuffle:
+            raise Exception("invalid shuffling strategy")
+
+
