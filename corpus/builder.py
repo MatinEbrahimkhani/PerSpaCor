@@ -138,37 +138,26 @@ class builder:
 
     def _save_corpus(self, corpus, corpus_name, corpus_type: Enum):
         # --------------------------------------- BIJANKHAN ---------------------------------------
+        file_key = handler.get_file_key(corpus_name, corpus_type)
 
-        if corpus_name == "bijankhan":
-            if corpus_type.value == type.whole_raw.value:
-                with open(self._filehandler.get_file("bijankhan_whole_raw"), 'w') as f:
-                    f.write(corpus)
-            elif corpus_type.value == type.whole_tok.value:
-                whole_str = ""
-                whole_str += self._tok_delim.join(corpus)
-                with open(self._filehandler.get_file("bijankhan_whole_tok"), 'w') as f:
-                    f.write(whole_str)
-            elif corpus_type.value == type.sents_raw.value:
-                with open(self._filehandler.get_file("bijankhan_sents_raw"), 'w') as f:
-                    for sent in corpus:
-                        f.write(sent + self._sent_delim)
-            elif corpus_type.value == type.sents_tok.value:
-                with open(self._filehandler.get_file("bijankhan_sents_tok"), 'w') as f:
-                    # Looping over the sentences
-                    for i, sent_tok in enumerate(corpus):
-                        sent_str = self._tok_delim.join(sent_tok)
-                        f.write(sent_str + self._sent_delim)
-
-            # --------------------------------------- PEYKAREH ---------------------------------------
-        elif corpus_name == "peykareh":
-            if corpus_type.value == type.whole_raw.value:
-                pass
-            elif corpus_type.value == type.whole_tok.value:
-                pass
-            elif corpus_type.value == type.sents_raw.value:
-                pass
-            elif corpus_type.value == type.sents_tok.value:
-                pass
+        if corpus_type.value == type.whole_raw.value:
+            with open(self._filehandler.get_file(file_key), 'w') as f:
+                f.write(corpus)
+        elif corpus_type.value == type.whole_tok.value:
+            whole_str = ""
+            whole_str += self._tok_delim.join(corpus)
+            with open(self._filehandler.get_file(file_key), 'w') as f:
+                f.write(whole_str)
+        elif corpus_type.value == type.sents_raw.value:
+            with open(self._filehandler.get_file(file_key), 'w') as f:
+                for sent in corpus:
+                    f.write(sent + self._sent_delim)
+        elif corpus_type.value == type.sents_tok.value:
+            with open(self._filehandler.get_file(file_key), 'w') as f:
+                # Looping over the sentences
+                for i, sent_tok in enumerate(corpus):
+                    sent_str = self._tok_delim.join(sent_tok)
+                    f.write(sent_str + self._sent_delim)
 
     def build_corpus(self, corpus_name, corpus_type: Enum):
 
@@ -198,3 +187,10 @@ class builder:
             self._save_corpus(sent_toks, corpus_name, corpus_type)
             return sent_toks
 
+    def build_all(self):
+        corpus_names = handler.corpus_names
+        corpus_types = handler.corpus_types
+        combinations = [(corpus_names[i], corpus_types[j]) for i in range(len(corpus_names)) for j in
+                        range(len(corpus_types))]
+        for (n, t) in combinations:
+            self.build_corpus(n, t)
