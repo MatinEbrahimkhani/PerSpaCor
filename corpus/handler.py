@@ -2,6 +2,8 @@ import csv
 import os
 import os
 import glob
+from enum import Enum
+from .type import type
 
 
 class handler:
@@ -14,6 +16,7 @@ class handler:
         filenames (str): The path to the file that contains the filenames and their paths. Default is "./corpus/_filenames.csv".
         """
         self.directory = base_directory
+        self.corpus_names = ['bijankhan', 'peykareh']
         self.filenames = filenames
         self._files = {}
         self._load_filenames()
@@ -28,21 +31,35 @@ class handler:
             for row in reader:
                 self._files[row[0]] = row[1]
 
-    def get_file(self, filename):
+    def get_file(self, file_key):
         """
-        Returns the path of the file with the specified filename.
+        Returns the path of the file with the specified file_key.
 
         Parameters:
-        filename (str): The name of the file to retrieve.
+        file_key (str): The key of the file to retrieve.
 
         Returns:
-        str: The path of the file with the specified filename.
+        str: The path of the file with the specified file_key.
 
         Raises:
-        Exception: If the specified filename is not in the dictionary of files.
+        Exception: If the specified file_key is not in the dictionary of files.
         """
-        return self._files.get(filename,
-                               f"File '{filename}' not found. Available filenames: {list(self._files.keys())}")
+        return self._files.get(file_key,
+                               f"File '{file_key}' not found. Available filenames: {list(self._files.keys())}")
+
+    @staticmethod
+    def get_file_key(corpus_name, corpus_type: Enum):
+        """
+            Returns a string that represents the key for a corpus file.
+
+            :param corpus_name: The name of the corpus.
+            :type corpus_name: str
+            :param corpus_type: The type of the corpus.
+            :type corpus_type: Enum
+            :return: A string that represents the key for a corpus file.
+            :rtype: str
+            """
+        return corpus_name + "_" + str(corpus_type.name)
 
     def find_files(self, name):
         """
@@ -64,6 +81,14 @@ class handler:
         dict: The dictionary of files and their paths.
         """
         return self._files
+
+    @property
+    def corpus_names(self) -> list:
+        return self.corpus_names
+
+    @property
+    def corpus_types(self) -> list:
+        return list(type)
 
     @staticmethod
     def split_file(file_path):
