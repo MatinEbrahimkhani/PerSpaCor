@@ -63,7 +63,7 @@ class loader:
         valid_shuffle = False
         any_shuffle = shuffle_tokens and shuffle_sentences
         loaded = loader._load_corpus(corpus_name,corpus_type)
-        if shuffle_sentences and (corpus_type.value == type.sents_tok.value or corpus_type.value == type.sents_tok.value)
+        if shuffle_sentences and (corpus_type.value == type.sents_tok.value or corpus_type.value == type.sents_tok.value):
             random.shuffle(loaded)
             valid_shuffle = True
 

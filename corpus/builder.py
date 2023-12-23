@@ -188,8 +188,9 @@ class builder:
             return sent_toks
 
     def build_all(self):
-        corpus_names = handler.corpus_names
-        corpus_types = handler.corpus_types
+        corpus_names = self._filehandler.corpus_names()
+        corpus_types = self._filehandler.corpus_types()
+
         combinations = [(corpus_names[i], corpus_types[j]) for i in range(len(corpus_names)) for j in
                         range(len(corpus_types))]
         for (n, t) in combinations:

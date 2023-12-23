@@ -16,7 +16,8 @@ class handler:
         filenames (str): The path to the file that contains the filenames and their paths. Default is "./corpus/_filenames.csv".
         """
         self.directory = base_directory
-        self.corpus_names = ['bijankhan', 'peykareh']
+        self._corpus_names = ['bijankhan', 'peykareh']
+        self._corpus_types = [e for e in type]
         self.filenames = filenames
         self._files = {}
         self._load_filenames()
@@ -82,13 +83,11 @@ class handler:
         """
         return self._files
 
-    @property
-    def corpus_names(self) -> list:
-        return self.corpus_names
+    def corpus_names(self):
+        return self._corpus_names
 
-    @property
-    def corpus_types(self) -> list:
-        return list(type)
+    def corpus_types(self):
+        return list(self._corpus_types)
 
     @staticmethod
     def split_file(file_path):
@@ -107,7 +106,8 @@ class handler:
     @staticmethod
     def combine_files(file_path):
         with open(file_path, 'wb') as outfile:
-            chunk_num = 0
+            chunk_num = 1
+
             while os.path.exists(f'{os.path.splitext(file_path)[0]}{chunk_num}.txt'):
                 with open(f'{os.path.splitext(file_path)[0]}{chunk_num}.txt', 'rb') as infile:
                     outfile.write(infile.read())
