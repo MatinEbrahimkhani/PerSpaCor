@@ -120,7 +120,7 @@ class loader:
                 whole = [sentence.split(self._tok_delim) for sentence in whole]
             return whole
 
-    def load_corpus(self, corpus_name, corpus_type: Enum, shuffle_sentences=False, shuffle_tokens=False):
+    def load_corpus(self, corpus_name, corpus_type: Enum, shuffle_sentences=False):
         """
         Loads the corpus and shuffles it if needed.
 
@@ -132,17 +132,12 @@ class loader:
             The type of corpus to be loaded.
         shuffle_sentences : bool, optional
             A boolean indicating whether to shuffle the sentences (default is False).
-        shuffle_tokens : bool, optional
-            A boolean indicating whether to shuffle the tokens (default is False).
 
         Returns
         -------
         loaded : str or list
             The contents of the corpus as a string or a list of strings.
         """
-        valid_shuffle = False
-        any_shuffle = shuffle_tokens and shuffle_sentences
-
         if corpus_name in self._filehandler.corpus_names():
             loaded = self._load_corpus(corpus_name, corpus_type)
         elif corpus_name == 'both':
@@ -151,20 +146,11 @@ class loader:
                 loaded += self.load_corpus(name, corpus_type)
         else:
             raise Exception('invalid corpus name')
-        # Sents raw true false
+
         if shuffle_sentences and (corpus_type.value == type.sents_tok.value or corpus_type.value == type.sents_raw.value):
             random.shuffle(loaded)
-            valid_shuffle = True
 
-        if shuffle_tokens and (corpus_type.value == type.whole_tok.value):
-            random.shuffle(loaded)
-            valid_shuffle = True
-        if shuffle_tokens and (corpus_type.value == type.sents_tok.value):
-            for sentence in loaded:
-                random.shuffle(sentence)
-            valid_shuffle = True
-        any_shuffle = shuffle_tokens or shuffle_sentences
-        if any_shuffle and not valid_shuffle:
+        elif shuffle_sentences:
             raise Exception("Invalid shuffling strategy")
         return loaded
 
