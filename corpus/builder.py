@@ -5,6 +5,17 @@ from .handler import handler
 
 
 class builder:
+    """
+        A class that builds files from given corpora.
+
+        Attributes:
+            _filehandler (handler): A handler object that handles file operations.
+            _corpus (dict): A dictionary containing the corpora.
+            _sent_div (set): A set containing the sentence delimiters.
+            _tok_delim (str): A string containing the token delimiter.
+            _sent_delim (str): A string containing the sentence delimiter.
+            _punc_corrections (dict): A dictionary containing the punctuation corrections.
+        """
     def __init__(self, tok_delim="\b", sent_delim="\n"):
         self._filehandler = handler()
         self._corpus = {}
@@ -76,11 +87,29 @@ class builder:
             yield sentence
 
     def _correct_punctuation(self, text):
+        """
+               Corrects the punctuation in the given text.
+
+               Args:
+                   text (str): The text to be corrected.
+
+               Returns:
+                   str: The corrected text.
+               """
         for incorrect, correct in self._punc_corrections.items():
             text = text.replace(incorrect, correct)
         return text
 
     def _process_corpus(self, corpus_name):
+        """
+                Processes the given corpus.
+
+                Args:
+                    corpus_name (str): The name of the corpus to be processed.
+
+                Returns:
+                    list: A list of sentence tokens.
+                """
         with open(self._corpus[corpus_name], "r") as f:
             text = f.read()
         # --------------------------------------- BIJANKHAN ---------------------------------------
@@ -160,7 +189,16 @@ class builder:
                     f.write(sent_str + self._sent_delim)
 
     def build_corpus(self, corpus_name, corpus_type: Enum):
+        """
+                Builds the corpus based on the given corpus name and type.
 
+                Args:
+                    corpus_name (str): The name of the corpus to be built.
+                    corpus_type (Enum): The type of the corpus to be built.
+
+                Returns:
+                    list
+        """
         if corpus_type not in list(type):
             raise Exception("invalid corpus type requested")
         sent_toks = self._process_corpus(corpus_name)
