@@ -16,6 +16,7 @@ class builder:
             _sent_delim (str): A string containing the sentence delimiter.
             _punc_corrections (dict): A dictionary containing the punctuation corrections.
         """
+
     def __init__(self, tok_delim="\b", sent_delim="\n"):
         self._filehandler = handler()
         self._corpus = {}
@@ -24,39 +25,42 @@ class builder:
         self._sent_div = {".", "?", "؟", "!"}
         self._tok_delim = tok_delim
         self._sent_delim = sent_delim
-        self._punc_corrections = {' ‹ ': ' ‹',
+        self._punc_corrections = {' ‹ ': '‹',
+                                  ' › ': '›',
+                                  ' « ': ' «',
                                   ' » ': '» ',
+                                  ' { ': ' {',
+                                  ' } ': '} ',
+                                  ' [ ': ' [',
+                                  ' ] ': '] ',
+                                  ' ) ': ' (',
+                                  ' ( ': ') ',
+
+                                  ' ؟ ': '؟ ',
+                                  ' ؟': "؟ ",
+                                  ' ! ': '! ',
+                                  ' !': "! ",
+                                  ' . ': '. ',
+                                  ' .': ". ",
+                                  ' ، ': '، ',
+                                  ' : ': ': ',
+                                  ' ؛ ': '؛',
                                   ' ’ ': '’',
                                   " ' ": "'",
                                   ' … ': '…',
-                                  ' ، ': '، ',
                                   ' & ': '&',
                                   ' - ': '-',
                                   ' \\ ': '\\',
-                                  ' : ': ': ',
                                   ' * ': ' * ',
                                   ' ^ ': '^',
                                   ' / ': '/',
-                                  ' { ': ' {',
-                                  ' } ': '} ',
                                   ' ~ ': '~',
-                                  ' › ': '›',
                                   ' " ': '"',
-                                  ' ) ': ') ',
-                                  ' ؟ ': '؟ ',
-                                  ' « ': ' «',
-                                  ' [ ': ' [',
-                                  ' ] ': '] ',
                                   ' $ ': ' $',
                                   ' % ': '%',
-                                  ' ؛ ': ' ؛',
-                                  ' . ': '. ',
                                   ' – ': ' – ',
-                                  ' ( ': ' (',
-                                  ' ! ': '! ',
                                   ' + ': '+',
-                                  ' @ ': '@'
-                                  }
+                                  ' @ ': '@'}
 
     def __bij_generate_sentence_tokenized(self, tokens):
         """
