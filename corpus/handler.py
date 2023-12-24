@@ -51,15 +51,15 @@ class handler:
     @staticmethod
     def get_file_key(corpus_name, corpus_type: Enum):
         """
-            Returns a string that represents the key for a corpus file.
+        Returns a string that represents the key for a corpus file.
 
-            :param corpus_name: The name of the corpus.
-            :type corpus_name: str
-            :param corpus_type: The type of the corpus.
-            :type corpus_type: Enum
-            :return: A string that represents the key for a corpus file.
-            :rtype: str
-            """
+        :param corpus_name: The name of the corpus.
+        :type corpus_name: str
+        :param corpus_type: The type of the corpus.
+        :type corpus_type: Enum
+        :return: A string that represents the key for a corpus file.
+        :rtype: str
+        """
         return corpus_name + "_" + str(corpus_type.name)
 
     def find_files(self, name):
@@ -91,6 +91,15 @@ class handler:
 
     @staticmethod
     def split_file(file_path):
+        """
+        Splits a file into smaller chunks of 64 MB each.
+
+        Parameters:
+        file_path (str): The path to the file to be split.
+
+        Returns:
+        None
+        """
         max_size = 64 * 1024 * 1024  # 100 MB
         with open(file_path, 'rb') as f:
             chunk = f.read(max_size)
@@ -105,6 +114,15 @@ class handler:
 
     @staticmethod
     def combine_files(file_path):
+        """
+       Combines the split files into a single file.
+
+       Parameters:
+       file_path (str): The path to the file to be combined.
+
+       Returns:
+       None
+        """
         with open(file_path, 'wb') as outfile:
             chunk_num = 1
 
