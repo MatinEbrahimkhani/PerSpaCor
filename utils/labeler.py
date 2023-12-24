@@ -125,7 +125,7 @@ class labeler:
         return list(characters.values()), list(labels.values())
 
     def _labeler(self) -> (list, list):
-      
+
         # Initialize empty lists to store the characters and labels
         result_chars = []
         result_labels = []
