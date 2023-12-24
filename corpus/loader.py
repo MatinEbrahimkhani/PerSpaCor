@@ -8,7 +8,40 @@ from .builder import builder
 
 
 class loader:
+    """
+     A class to load corpora and build them if needed.
+
+     Attributes
+     ----------
+     _filehandler : handler
+         A file handler object to read the corpus files.
+     _corpus : dict
+         A dictionary containing the corpus files.
+     _sent_div : set
+         A set of sentence delimiters.
+     _tok_delim : str
+         A string representing the token delimiter.
+     _sent_delim : str
+         A string representing the sentence delimiter.
+
+     Methods
+     -------
+     load_file_as_str(txtfile: str) -> str:
+         Reads the file and returns its contents as a string.
+     load_corpus(corpus_name, corpus_type: Enum, shuffle_sentences=False, shuffle_tokens=False) -> str or list:
+         Loads the corpus and shuffles it if needed.
+     _load_corpus(corpus_name, corpus_type: Enum) -> str or list:
+         Loads the corpus and builds it if needed.
+     """
     def __init__(self, tok_delim="\b", sent_delim="\n"):
+        """
+        Parameters
+        ----------
+        tok_delim : str, optional
+            A string representing the token delimiter (default is "\b").
+        sent_delim : str, optional
+            A string representing the sentence delimiter (default is "\n").
+        """
         self._filehandler = handler()
         self._corpus = {}
         self._corpus['bijankhan'] = self._filehandler.get_file("bijankhan_unprocessed")
@@ -19,11 +52,39 @@ class loader:
 
     @staticmethod
     def load_file_as_str(txtfile):
-        # Read the file and return its contents as a string
+        """
+        Reads the file and returns its contents as a string.
+
+        Parameters
+        ----------
+        txtfile : str
+            The name of the file to be read.
+
+        Returns
+        -------
+        str
+            The contents of the file as a string.
+        """
         with open(txtfile, "r") as f:
             return f.read()
 
     def _load_corpus(self, corpus_name, corpus_type: Enum):
+        """
+        Loads the corpus and builds it if needed.
+
+        Parameters
+        ----------
+        corpus_name : str
+            The name of the corpus to be loaded.
+        corpus_type : Enum
+            The type of corpus to be loaded.
+
+        Returns
+        -------
+        whole : str or list
+            The contents of the corpus as a string or a list of strings.
+        """
+
         if corpus_type not in list(type):
             raise Exception("invalid corpus type requested")
         file_key = handler.get_file_key(corpus_name, corpus_type)
@@ -60,6 +121,25 @@ class loader:
             return whole
 
     def load_corpus(self, corpus_name, corpus_type: Enum, shuffle_sentences=False, shuffle_tokens=False):
+        """
+        Loads the corpus and shuffles it if needed.
+
+        Parameters
+        ----------
+        corpus_name : str
+            The name of the corpus to be loaded.
+        corpus_type : Enum
+            The type of corpus to be loaded.
+        shuffle_sentences : bool, optional
+            A boolean indicating whether to shuffle the sentences (default is False).
+        shuffle_tokens : bool, optional
+            A boolean indicating whether to shuffle the tokens (default is False).
+
+        Returns
+        -------
+        loaded : str or list
+            The contents of the corpus as a string or a list of strings.
+        """
         valid_shuffle = False
         any_shuffle = shuffle_tokens and shuffle_sentences
 
