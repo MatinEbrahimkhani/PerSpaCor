@@ -62,20 +62,61 @@ class loader:
     def load_corpus(self, corpus_name, corpus_type: Enum, shuffle_sentences=False, shuffle_tokens=False):
         valid_shuffle = False
         any_shuffle = shuffle_tokens and shuffle_sentences
-        loaded = loader._load_corpus(corpus_name,corpus_type)
-        if shuffle_sentences and (corpus_type.value == type.sents_tok.value or corpus_type.value == type.sents_tok.value):
+
+        if corpus_name in self._filehandler.corpus_names():
+            loaded = self._load_corpus(corpus_name, corpus_type)
+        elif corpus_name == 'both':
+            loaded = '' if corpus_type.value == type.whole_raw else []
+            for name in self._filehandler.corpus_names():
+                loaded += self.load_corpus(name, corpus_type)
+        else:
+            raise Exception('invalid corpus name')
+        # Sents raw true false
+        if shuffle_sentences and (corpus_type.value == type.sents_tok.value or corpus_type.value == type.sents_raw.value):
             random.shuffle(loaded)
             valid_shuffle = True
 
-        if shuffle_tokens and corpus_type.value == type.whole_tok.value:
+        if shuffle_tokens and (corpus_type.value == type.whole_tok.value):
             random.shuffle(loaded)
             valid_shuffle = True
-        if shuffle_tokens and corpus_type.value == type.sents_tok.value:
+        if shuffle_tokens and (corpus_type.value == type.sents_tok.value):
             for sentence in loaded:
                 random.shuffle(sentence)
             valid_shuffle = True
+        any_shuffle = shuffle_tokens or shuffle_sentences
+        if any_shuffle and not valid_shuffle:
+            raise Exception("Invalid shuffling strategy")
+        return loaded
 
-        if not valid_shuffle or not any_shuffle:
-            raise Exception("invalid shuffling strategy")
+    def load_corpus__(self, corpus_name, corpus_type: Enum, shuffle_sentences=False, shuffle_tokens=False):
+        valid_shuffle = False
+        any_shuffle = shuffle_tokens and shuffle_sentences
 
+        if corpus_name not in self._filehandler.corpus_names() and corpus_name != 'both':
+            raise Exception('invalid corpus name')
+
+        loaded = None
+        for name in self._filehandler.corpus_names() if corpus_name == 'both' else [corpus_name]:
+            corpus = self._load_corpus(name, corpus_type)
+            if loaded is None:
+                loaded = corpus
+            else:
+                loaded += corpus
+
+            if any_shuffle:
+                if corpus_type.value == type.sents_tok.value or corpus_type.value == type.sents_raw.value:
+                    random.shuffle(loaded)
+                    valid_shuffle = True
+                elif corpus_type.value == type.whole_tok.value:
+                    random.shuffle(loaded)
+                    valid_shuffle = True
+                elif corpus_type.value == type.sents_tok.value:
+                    for sentence in loaded:
+                        random.shuffle(sentence)
+                    valid_shuffle = True
+
+        if any_shuffle and not valid_shuffle:
+            raise Exception("Invalid shuffling strategy")
+
+        return loaded
 
