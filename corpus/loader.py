@@ -33,6 +33,7 @@ class loader:
      _load_corpus(corpus_name, corpus_type: Enum) -> str or list:
          Loads the corpus and builds it if needed.
      """
+
     def __init__(self, tok_delim="\b", sent_delim="\n"):
         """
         Parameters
@@ -140,14 +141,15 @@ class loader:
         """
         if corpus_name in self._filehandler.corpus_names():
             loaded = self._load_corpus(corpus_name, corpus_type)
-        elif corpus_name == 'both':
+        elif corpus_name == 'all':
             loaded = '' if corpus_type.value == type.whole_raw else []
             for name in self._filehandler.corpus_names():
-                loaded += self.load_corpus(name, corpus_type)
+                loaded += self._load_corpus(name, corpus_type)
         else:
-            raise Exception('invalid corpus name')
+            raise Exception(f'invalid corpus name \nrequested name:\t{corpus_name} \navailable names:\t{self._filehandler.corpus_names()}')
 
-        if shuffle_sentences and (corpus_type.value == type.sents_tok.value or corpus_type.value == type.sents_raw.value):
+        if shuffle_sentences and (
+                corpus_type.value == type.sents_tok.value or corpus_type.value == type.sents_raw.value):
             random.shuffle(loaded)
 
         elif shuffle_sentences:
@@ -158,11 +160,12 @@ class loader:
         valid_shuffle = False
         any_shuffle = shuffle_tokens and shuffle_sentences
 
-        if corpus_name not in self._filehandler.corpus_names() and corpus_name != 'both':
-            raise Exception('invalid corpus name')
+        if corpus_name not in self._filehandler.corpus_names():
+            if corpus_name != 'all':
+                raise Exception('invalid corpus name')
 
         loaded = None
-        for name in self._filehandler.corpus_names() if corpus_name == 'both' else [corpus_name]:
+        for name in self._filehandler.corpus_names() if corpus_name == 'all' else [corpus_name]:
             corpus = self._load_corpus(name, corpus_type)
             if loaded is None:
                 loaded = corpus
@@ -185,4 +188,3 @@ class loader:
             raise Exception("Invalid shuffling strategy")
 
         return loaded
-
