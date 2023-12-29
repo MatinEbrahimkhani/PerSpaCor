@@ -142,7 +142,17 @@ class loader:
         if corpus_name in self._filehandler.corpus_names():
             loaded = self._load_corpus(corpus_name, corpus_type)
         elif corpus_name == 'all':
-            loaded = '' if corpus_type.value == type.whole_raw else []
+            if corpus_type.value == type.whole_raw.value:
+                loaded = ""
+            else :
+                loaded = []
+            if shuffle_sentences:
+                loaded = []
+                shuffle_sentences = False
+                for name in self._filehandler.corpus_names():
+                    loaded += self._load_corpus(name, type.sents_raw)
+                random.shuffle(loaded)
+                loaded = " ".join(loaded)
             for name in self._filehandler.corpus_names():
                 loaded += self._load_corpus(name, corpus_type)
         else:
@@ -156,35 +166,5 @@ class loader:
             raise Exception("Invalid shuffling strategy")
         return loaded
 
-    def load_corpus__(self, corpus_name, corpus_type: Enum, shuffle_sentences=False, shuffle_tokens=False):
-        valid_shuffle = False
-        any_shuffle = shuffle_tokens and shuffle_sentences
 
-        if corpus_name not in self._filehandler.corpus_names():
-            if corpus_name != 'all':
-                raise Exception('invalid corpus name')
 
-        loaded = None
-        for name in self._filehandler.corpus_names() if corpus_name == 'all' else [corpus_name]:
-            corpus = self._load_corpus(name, corpus_type)
-            if loaded is None:
-                loaded = corpus
-            else:
-                loaded += corpus
-
-            if any_shuffle:
-                if corpus_type.value == type.sents_tok.value or corpus_type.value == type.sents_raw.value:
-                    random.shuffle(loaded)
-                    valid_shuffle = True
-                elif corpus_type.value == type.whole_tok.value:
-                    random.shuffle(loaded)
-                    valid_shuffle = True
-                elif corpus_type.value == type.sents_tok.value:
-                    for sentence in loaded:
-                        random.shuffle(sentence)
-                    valid_shuffle = True
-
-        if any_shuffle and not valid_shuffle:
-            raise Exception("Invalid shuffling strategy")
-
-        return loaded
