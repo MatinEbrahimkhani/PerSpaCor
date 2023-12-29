@@ -1,11 +1,58 @@
+import itertools
+
+from corpus.builder import builder
 from corpus.type import type
 from corpus.handler import handler
 
-corpusname = "bijankhan"
-# c_type= type.sents_raw
-c_type= type.whole_raw
-c_type= type.whole_tok
-# c_type= type.sents_tok
+from utils.labeler import labeler
 
-filename = corpusname+"_"+str(c_type.name)
-print(handler().get_file(filename))
+bul = builder()
+# bul.build_all()
+# bul.build_corpus("bijankhan",type.whole_raw)
+# from  corpus.handler import handler
+from corpus.loader import loader
+from utils.label_evaluator import Evaluator
+
+
+def test_all_inputs(func, twoD_list: list):
+    for inputs in itertools.product(*twoD_list):
+        print(*inputs)
+        try:
+            result = func(*inputs)
+            print(result[:50])
+            print(type(result))
+            print("\n\n\n\n\n")
+            return result
+        except:
+            print("------------------------Error????   ", *inputs)
+
+
+from corpus.loader import loader
+from corpus.type import type
+
+
+corpus_loader = loader()
+corpus_type = type.whole_raw
+#
+# bijankhan = corpus_loader.load_corpus(corpus_name='bijankhan',
+#                                       corpus_type=corpus_type)
+#
+# peykareh = corpus_loader.load_corpus(corpus_name="peykareh",
+#                                      corpus_type=corpus_type)
+
+# all_corpora = corpus_loader.load_corpus(corpus_name="all",
+#                                         corpus_type=corpus_type,
+#                                         shuffle_sentences= True)
+#
+# print(len(bijankhan))
+# print(len(peykareh))
+# print(len(peykareh) + len(bijankhan))
+# print(len(all_corpora))
+# print(all_corpora[:50])
+import random
+import string
+from utils.dataset_util import chunk_tokens
+random_list = [random.choice(string.ascii_letters) for i in range(100)]
+zeros_and_ones_list = [random.choice([0, 1]) for i in range(100)]
+chunk_tokens(random_list,zeros_and_ones_list,105,True)
+
