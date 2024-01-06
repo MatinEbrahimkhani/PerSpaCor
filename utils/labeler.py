@@ -4,14 +4,14 @@ import sys
 
 import warnings
 
-from corpus.loader import loader
-from corpus.type import type as Ctype
+from corpus.loader import Loader
+from corpus.type import Type as Ctype
 
 # Set the print option for numpy arrays to display the whole array without truncation
 np.set_printoptions(threshold=sys.maxsize)
 
 
-class labeler:
+class Labeler:
     """A class that labels text based on regular expressions.
 
     Attributes:

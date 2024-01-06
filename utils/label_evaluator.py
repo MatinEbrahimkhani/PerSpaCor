@@ -1,6 +1,6 @@
 from enum import Enum
 
-from corpus.type import type
+from corpus.type import Type
 from tabulate import tabulate
 
 
@@ -19,7 +19,8 @@ class Evaluator:
     def _set_labels(self, true_labels, pred_labels):
         pass
 
-    def _count_labels(self, true_labels, pred_labels, label):
+    @staticmethod
+    def _count_labels(true_labels, pred_labels, label):
         if len(true_labels) != len(pred_labels):
             raise ValueError("The lists of labels must have the same length")
         # use list comprehension to get the indices where the true label is equal to the current label
@@ -45,12 +46,12 @@ class Evaluator:
 
     def evaluate(self, true_labels, pred_labels, corpus_type: Enum):
         self._metrics = {}
-        if corpus_type.value == type.whole_raw.value:
+        if corpus_type.value == Type.whole_raw.value:
             for label in self.labels:
                 tp, fp, fn, true_count = self._count_labels(true_labels, pred_labels, label)
                 self._compute_metrics(tp, fp, fn, label, true_count)
 
-        elif corpus_type.value == type.sents_raw.value:
+        elif corpus_type.value == Type.sents_raw.value:
             for label in self.labels:
                 # initialize the counts of true positives, false positives, false negatives and true negatives
                 tp = 0
@@ -108,7 +109,7 @@ class Evaluator:
         print(f'Recall: {recall:.2f}')
         print(f'Accuracy: {accuracy:.2f}')
         print(f'F1 Score: {f1:.2f}')
-        self.evaluate(true_labels, pred_labels, corpus_type=type.whole_raw)
+        self.evaluate(true_labels, pred_labels, corpus_type=Type.whole_raw)
         self.show_metrics()
 
     def test_sents_raw(self):
@@ -122,5 +123,5 @@ class Evaluator:
                        [0, 1, 2, 1, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2]]
 
 
-        self.evaluate(true_labels, pred_labels, corpus_type=type.sents_raw)
+        self.evaluate(true_labels, pred_labels, corpus_type=Type.sents_raw)
         self.show_metrics()

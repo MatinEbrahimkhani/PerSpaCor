@@ -2,18 +2,18 @@ import os
 from enum import Enum
 import random
 
-from .type import type
-from .handler import handler
-from .builder import builder
+from .type import Type
+from .handler import Handler
+from .builder import Builder
 
 
-class loader:
+class Loader:
     """
      A class to load corpora and build them if needed.
 
      Attributes
      ----------
-     _filehandler : handler
+     _filehandler : Handler
          A file handler object to read the corpus files.
      _corpus : dict
          A dictionary containing the corpus files.
@@ -43,7 +43,7 @@ class loader:
         sent_delim : str, optional
             A string representing the sentence delimiter (default is "\n").
         """
-        self._filehandler = handler()
+        self._filehandler = Handler()
         self._corpus = {}
         self._corpus['bijankhan'] = self._filehandler.get_file("bijankhan_unprocessed")
         self._corpus['peykareh'] = self._filehandler.get_file("peykareh_unprocessed")
@@ -86,34 +86,34 @@ class loader:
             The contents of the corpus as a string or a list of strings.
         """
 
-        if corpus_type not in list(type):
+        if corpus_type not in list(Type):
             raise Exception("invalid corpus type requested")
-        file_key = handler.get_file_key(corpus_name, corpus_type)
+        file_key = Handler.get_file_key(corpus_name, corpus_type)
 
         if not os.path.isfile(self._filehandler.get_file(file_key)):
             print(f"Requested version not found corpus_name: {corpus_name}, corpus_type: {corpus_type}")
             print("building the corpus")
-            return builder().build_corpus(corpus_name, corpus_type)
+            return Builder().build_corpus(corpus_name, corpus_type)
 
         file_path = self._filehandler.get_file(file_key)
-        if corpus_type.value == type.whole_raw.value:
+        if corpus_type.value == Type.whole_raw.value:
             with open(file_path, "r") as f:
                 # Reading the lines from the file
                 whole = f.read()
             return whole
-        elif corpus_type.value == type.whole_tok.value:
+        elif corpus_type.value == Type.whole_tok.value:
             with open(file_path, "r") as f:
                 # Reading the lines from the file
                 whole = f.read()
                 whole = whole.split(self._tok_delim)
             return whole
-        elif corpus_type.value == type.sents_raw.value:
+        elif corpus_type.value == Type.sents_raw.value:
             with open(file_path, "r") as f:
                 # Reading the lines from the file
                 whole = f.read()
                 whole = whole.split(self._sent_delim)
             return whole
-        elif corpus_type.value == type.sents_tok.value:
+        elif corpus_type.value == Type.sents_tok.value:
             with open(file_path, "r") as f:
                 # Reading the lines from the file
                 whole = f.read()
@@ -142,7 +142,7 @@ class loader:
         if corpus_name in self._filehandler.corpus_names():
             loaded = self._load_corpus(corpus_name, corpus_type)
         elif corpus_name == 'all':
-            if corpus_type.value == type.whole_raw.value:
+            if corpus_type.value == Type.whole_raw.value:
                 loaded = ""
             else :
                 loaded = []
@@ -150,7 +150,7 @@ class loader:
                 loaded = []
                 shuffle_sentences = False
                 for name in self._filehandler.corpus_names():
-                    loaded += self._load_corpus(name, type.sents_raw)
+                    loaded += self._load_corpus(name, Type.sents_raw)
                 random.shuffle(loaded)
                 loaded = " ".join(loaded)
             for name in self._filehandler.corpus_names():
@@ -159,7 +159,7 @@ class loader:
             raise Exception(f'invalid corpus name \nrequested name:\t{corpus_name} \navailable names:\t{self._filehandler.corpus_names()}')
 
         if shuffle_sentences and (
-                corpus_type.value == type.sents_tok.value or corpus_type.value == type.sents_raw.value):
+                corpus_type.value == Type.sents_tok.value or corpus_type.value == Type.sents_raw.value):
             random.shuffle(loaded)
 
         elif shuffle_sentences:

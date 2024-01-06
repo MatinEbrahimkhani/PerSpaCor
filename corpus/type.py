@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class type(Enum):
+class Type(Enum):
     """
     An enumeration of corpus types.
 

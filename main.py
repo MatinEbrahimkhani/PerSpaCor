@@ -1,16 +1,16 @@
 import itertools
 
-from corpus.builder import builder
-from corpus.type import type
-from corpus.handler import handler
+from corpus.builder import Builder
+from corpus.type import Type
+from corpus.handler import Handler
 
-from utils.labeler import labeler
+from utils.labeler import Labeler
 
-bul = builder()
+bul = Builder()
 # bul.build_all()
 # bul.build_corpus("bijankhan",type.whole_raw)
 # from  corpus.handler import handler
-from corpus.loader import loader
+from corpus.loader import Loader
 from utils.label_evaluator import Evaluator
 
 
@@ -20,19 +20,19 @@ def test_all_inputs(func, twoD_list: list):
         try:
             result = func(*inputs)
             print(result[:50])
-            print(type(result))
+            print(Type(result))
             print("\n\n\n\n\n")
             return result
         except:
             print("------------------------Error????   ", *inputs)
 
 
-from corpus.loader import loader
-from corpus.type import type
+from corpus.loader import Loader
+from corpus.type import Type
 
 
-corpus_loader = loader()
-corpus_type = type.whole_raw
+corpus_loader = Loader()
+corpus_type = Type.whole_raw
 #
 # bijankhan = corpus_loader.load_corpus(corpus_name='bijankhan',
 #                                       corpus_type=corpus_type)

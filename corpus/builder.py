@@ -1,15 +1,15 @@
 from enum import Enum
 
-from .type import type
-from .handler import handler
+from .type import Type
+from .handler import Handler
 
 
-class builder:
+class Builder:
     """
         A class that builds files from given corpora.
 
         Attributes:
-            _filehandler (handler): A handler object that handles file operations.
+            _filehandler (Handler): A handler object that handles file operations.
             _corpus (dict): A dictionary containing the corpora.
             _sent_div (set): A set containing the sentence delimiters.
             _tok_delim (str): A string containing the token delimiter.
@@ -18,7 +18,7 @@ class builder:
         """
 
     def __init__(self, tok_delim="\b", sent_delim="\n"):
-        self._filehandler = handler()
+        self._filehandler = Handler()
         self._corpus = {}
         self._corpus['bijankhan'] = self._filehandler.get_file("bijankhan_unprocessed")
         self._corpus['peykareh'] = self._filehandler.get_file("peykareh_unprocessed")
@@ -149,43 +149,43 @@ class builder:
 
     def template(self, corpus_name, corpus_type: Enum):
         if corpus_name == "bijankhan":
-            if corpus_type.value == type.whole_raw.value:
+            if corpus_type.value == Type.whole_raw.value:
                 pass
-            elif corpus_type.value == type.whole_tok.value:
+            elif corpus_type.value == Type.whole_tok.value:
                 pass
-            elif corpus_type.value == type.sents_raw.value:
+            elif corpus_type.value == Type.sents_raw.value:
                 pass
-            elif corpus_type.value == type.sents_tok.value:
+            elif corpus_type.value == Type.sents_tok.value:
                 pass
 
             # --------------------------------------- PEYKAREH ---------------------------------------
         elif corpus_name == "peykareh":
-            if corpus_type.value == type.whole_raw.value:
+            if corpus_type.value == Type.whole_raw.value:
                 pass
-            elif corpus_type.value == type.whole_tok.value:
+            elif corpus_type.value == Type.whole_tok.value:
                 pass
-            elif corpus_type.value == type.sents_raw.value:
+            elif corpus_type.value == Type.sents_raw.value:
                 pass
-            elif corpus_type.value == type.sents_tok.value:
+            elif corpus_type.value == Type.sents_tok.value:
                 pass
 
     def _save_corpus(self, corpus, corpus_name, corpus_type: Enum):
         # --------------------------------------- BIJANKHAN ---------------------------------------
-        file_key = handler.get_file_key(corpus_name, corpus_type)
+        file_key = Handler.get_file_key(corpus_name, corpus_type)
 
-        if corpus_type.value == type.whole_raw.value:
+        if corpus_type.value == Type.whole_raw.value:
             with open(self._filehandler.get_file(file_key), 'w') as f:
                 f.write(corpus)
-        elif corpus_type.value == type.whole_tok.value:
+        elif corpus_type.value == Type.whole_tok.value:
             whole_str = ""
             whole_str += self._tok_delim.join(corpus)
             with open(self._filehandler.get_file(file_key), 'w') as f:
                 f.write(whole_str)
-        elif corpus_type.value == type.sents_raw.value:
+        elif corpus_type.value == Type.sents_raw.value:
             with open(self._filehandler.get_file(file_key), 'w') as f:
                 for sent in corpus:
                     f.write(sent + self._sent_delim)
-        elif corpus_type.value == type.sents_tok.value:
+        elif corpus_type.value == Type.sents_tok.value:
             with open(self._filehandler.get_file(file_key), 'w') as f:
                 # Looping over the sentences
                 for i, sent_tok in enumerate(corpus):
@@ -203,29 +203,29 @@ class builder:
                 Returns:
                     list
         """
-        if corpus_type not in list(type):
+        if corpus_type not in list(Type):
             raise Exception("invalid corpus type requested")
         sent_toks = self._process_corpus(corpus_name)
 
-        if corpus_type.value == type.whole_raw.value:
+        if corpus_type.value == Type.whole_raw.value:
             toks = [t for sentence in sent_toks for t in sentence]
             whole = " ".join(toks)
             whole = self._correct_punctuation(whole)
             self._save_corpus(whole, corpus_name, corpus_type)
             return whole
 
-        elif corpus_type.value == type.whole_tok.value:
+        elif corpus_type.value == Type.whole_tok.value:
             tokens = [t for sentence in sent_toks for t in sentence]
             self._save_corpus(tokens, corpus_name, corpus_type)
             return tokens
 
-        elif corpus_type.value == type.sents_raw.value:
+        elif corpus_type.value == Type.sents_raw.value:
             sentences = [" ".join(sentence) for sentence in sent_toks]
             sentences = [self._correct_punctuation(sentence) for sentence in sentences]
             self._save_corpus(sentences, corpus_name, corpus_type)
             return sentences
 
-        elif corpus_type.value == type.sents_tok.value:
+        elif corpus_type.value == Type.sents_tok.value:
             self._save_corpus(sent_toks, corpus_name, corpus_type)
             return sent_toks
 

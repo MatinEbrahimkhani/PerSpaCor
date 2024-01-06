@@ -3,10 +3,10 @@ import os
 import os
 import glob
 from enum import Enum
-from .type import type
+from .type import Type
 
 
-class handler:
+class Handler:
     def __init__(self, base_directory="./", filenames="./corpus/_filenames.csv"):
         """
         Initializes the CorpusHandler class with a directory to search and a file that contains the filenames and their paths.
@@ -17,7 +17,7 @@ class handler:
         """
         self.directory = base_directory
         self._corpus_names = ['bijankhan', 'peykareh']
-        self._corpus_types = [e for e in type]
+        self._corpus_types = [e for e in Type]
         self.filenames = filenames
         self._files = {}
         self._load_filenames()
