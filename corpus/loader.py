@@ -150,11 +150,13 @@ class Loader:
                 loaded = []
                 shuffle_sentences = False
                 for name in self._filehandler.corpus_names():
+                    xxx = self._load_corpus(name, Type.sents_raw)
                     loaded += self._load_corpus(name, Type.sents_raw)
                 random.shuffle(loaded)
                 loaded = " ".join(loaded)
-            for name in self._filehandler.corpus_names():
-                loaded += self._load_corpus(name, corpus_type)
+            else:
+                for name in self._filehandler.corpus_names():
+                    loaded += self._load_corpus(name, corpus_type)
         else:
             raise Exception(f'invalid corpus name \nrequested name:\t{corpus_name} \navailable names:\t{self._filehandler.corpus_names()}')
 

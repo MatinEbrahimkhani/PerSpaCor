@@ -1,12 +1,12 @@
-import itertools
+# import itertools
 
 from corpus.builder import Builder
 from corpus.type import Type
 from corpus.handler import Handler
 
 from utils.labeler import Labeler
-
-bul = Builder()
+#
+# bul = Builder()
 # bul.build_all()
 # bul.build_corpus("bijankhan",type.whole_raw)
 # from  corpus.handler import handler
@@ -30,9 +30,8 @@ def test_all_inputs(func, twoD_list: list):
 from corpus.loader import Loader
 from corpus.type import Type
 
-
-corpus_loader = Loader()
-corpus_type = Type.whole_raw
+# corpus_loader = Loader()
+# corpus_type = Type.whole_raw
 #
 # bijankhan = corpus_loader.load_corpus(corpus_name='bijankhan',
 #                                       corpus_type=corpus_type)
@@ -49,10 +48,7 @@ corpus_type = Type.whole_raw
 # print(len(peykareh) + len(bijankhan))
 # print(len(all_corpora))
 # print(all_corpora[:50])
-import random
-import string
-from utils.dataset_util import chunk_tokens
-random_list = [random.choice(string.ascii_letters) for i in range(100)]
-zeros_and_ones_list = [random.choice([0, 1]) for i in range(100)]
-chunk_tokens(random_list,zeros_and_ones_list,105,True)
-
+corpus_type = Type.sents_raw
+dataset_path = "./built_datasets/all.01/"
+data = Loader().load_corpus("all", corpus_type=corpus_type, shuffle_sentences=True)
+print(data[:10])
